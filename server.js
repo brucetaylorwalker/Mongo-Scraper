@@ -7,7 +7,7 @@ var cheerio = require("cheerio");
 
 var db = require("./models");
 
-var PORT = 8080;
+var PORT = 3000;
 
 var app = express();
 
@@ -21,45 +21,47 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 app.get("/scrape", function (req, res) {
-  // axios.get("http://weeklyworldnews.com/").then(function (response) {
+  axios.get("http://weeklyworldnews.com/").then(function (response) {
 
-  //   var $ = cheerio.load(response.data);
+    var $ = cheerio.load(response.data);
 
-  //   // An empty array to save data
-  //   var results = [];
+    // An empty array to save data
+    var results = [];
 
-  //   $("article h1").each(function (i, element) {
-  //save text in "title"
-  // var title = $(element).text();
-  // //save "href" attributes in "link"
-  // var link = $(element).children("a").attr("href");
+    $("article h1").each(function (i, element) {
+  // save text in "title"
+  var title = $(element).text();
+  //save "href" attributes in "link"
+  var link = $(element).children("a").attr("href");
 
   //     //if (title && link) {
   //     //};
 
-  //     // Save results in empty array
-  //     results.push({
-  //       title: title,
-  //       link: link
-  //     });
-  //   });
-  axios.get("http://weeklyworldnews.com/").then(function (response) {
-    var $ = cheerio.load(response.data);
-
-    $("article h1").each(function (i, element) {
-      result.title = $(this).text();
-      result.link = $(this).children("a").attr("href");
-      db.Article.create(result)
-        .then(function (dbArticle) {
-          console.log(dbArticle);
-        })
-        .catch(function (err) {
-          console.log(err);
-        });
+      // Save results in empty array
+      results.push({
+        title: title,
+        link: link
+      });
     });
+  // axios.get("http://weeklyworldnews.com/").then(function (response) {
+  //   var $ = cheerio.load(response.data);
 
-    // Send a message to the client
-    res.send("Scrape Complete");
+  //   $("article h1").each(function (i, element) {
+
+  //     var result = {};
+
+  //     result.title = $(this).text();
+  //     result.link = $(this).children("a").attr("href");
+  //     db.Article.create(result)
+  //       .then(function (dbArticle) {
+  //         console.log(dbArticle);
+  //       })
+  //       .catch(function (err) {
+  //         console.log(err);
+  //       });
+  //   });
+
+ 
   });
 
   // Log the results once you've looped through each of the elements found with cheerio
